@@ -1616,13 +1616,14 @@ if __name__ == "__main__":
     # Render asigna un puerto automáticamente en la variable de entorno PORT
     port = int(os.environ.get("PORT", 8550))
     
-    # Ejecutar Flet en modo web server, escuchando en todas las interfaces de red
-    # host="0.0.0.0" es CRUCIAL para que Render pueda acceder a la app
+    # Ejecutar Flet en modo web server.
+    # NOTA: En servidores como Render, NO usamos view=ft.WEB_BROWSER.
+    # Usamos view=None o simplemente dejamos que Flet lo detecte.
+    # host="0.0.0.0" es CRUCIAL para que Render pueda acceder a la app.
     ft.app(
         target=main, 
-        view=ft.WEB_BROWSER, 
+        view=None,          # <-- CAMBIO CLAVE: None en lugar de WEB_BROWSER
         port=port, 
         host="0.0.0.0"
     )
-    
     

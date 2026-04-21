@@ -9,4 +9,3 @@ firebase_config = {
     "messagingSenderId": "848318416525",
     "appId": "1:848318416525:android:cbafa77b48b7ded2b744"
 }
-
