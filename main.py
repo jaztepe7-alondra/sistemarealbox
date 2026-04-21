@@ -1,11 +1,9 @@
-
-# ============================================================================
 # ============================================================================
 # ==================== REALBOX - SISTEMA DE CONTROL DE INVENTARIOS ==========
 # ============================================================================
 # Descripción: Aplicación para gestionar inventario de productos con Firebase
 # Autor: Jazmin Alondra Tepetate Medina
-# Versión: 2.4 - Corrección: Container scroll y usuarios especiales
+# Versión: 2.5 - Optimizado para Render.com (Web Server)
 # ============================================================================
 
 # ==================== IMPORTACIÓN DE LIBRERÍAS ====================
@@ -19,10 +17,11 @@ from reportlab.lib.styles import getSampleStyleSheet  # Estilos de texto para PD
 import os                            # Para manejar rutas de archivos
 import time                          # Para pausas temporales
 
-# Importar la configuración de Firebase
+# Importar la configuración de Firebase desde otro archivo
 from firebase_config import firebase_config
 
 # ==================== INICIALIZAR FIREBASE ====================
+# Conectamos con Firebase usando la configuración del archivo firebase_config.py
 firebase = pyrebase.initialize_app(firebase_config)
 db = firebase.database()        # Base de datos Realtime Database
 auth = firebase.auth()          # Sistema de autenticación
@@ -81,6 +80,7 @@ class RealBoxApp:
         self.page.title = "REALBOX - Control de Inventarios"
         self.page.theme_mode = ft.ThemeMode.LIGHT
         self.page.bgcolor = "#FFFFFF"
+        # Nota: En modo web server, window.width/height no afectan mucho, pero los dejamos por compatibilidad
         self.page.window.width = 550
         self.page.window.height = 850
         self.page.scroll = ft.ScrollMode.AUTO
@@ -100,6 +100,7 @@ class RealBoxApp:
         # Lista de asociados (se llena al abrir reporte)
         self.asociados_lista = []
         
+        # Mostrar pantalla de login al iniciar
         self.navegar_a_login()
     
     # ========================================================================
@@ -1056,14 +1057,11 @@ class RealBoxApp:
             self.page.update()
     
     # ========================================================================
-    # ✅ CORREGIDO: VER INVENTARIO (SIN scroll EN Container) =================
+    # ==================== VER INVENTARIO ====================================
     # ========================================================================
     
     def navegar_a_inventario(self):
-        """
-        Muestra tabla con todos los registros de inventario
-        ✅ CORREGIDO: Se usa Column con scroll en lugar de Container
-        """
+        """Muestra tabla con todos los registros de inventario"""
         self.page.clean()
         
         filtro_estatus = ft.Dropdown(
@@ -1099,7 +1097,6 @@ class RealBoxApp:
             height=40,
         )
         
-        # ✅ CORREGIDO: Usar Column con scroll en lugar de Container con scroll
         self.page.add(
             ft.Container(
                 content=ft.Column(
@@ -1109,11 +1106,10 @@ class RealBoxApp:
                         ft.Container(height=10),
                         ft.Row([filtro_estatus, btn_refrescar], alignment=ft.MainAxisAlignment.CENTER),
                         ft.Container(height=20),
-                        # ✅ Column con scroll para la tabla
                         ft.Container(
                             content=ft.Column(
                                 [self.inventario_container],
-                                scroll=ft.ScrollMode.AUTO  # ✅ scroll EN Column, NO en Container
+                                scroll=ft.ScrollMode.AUTO
                             ),
                             width=self.page.window.width - 60,
                             height=450,
@@ -1200,17 +1196,14 @@ class RealBoxApp:
         self.page.update()
     
     # ========================================================================
-    # ✅ CORREGIDO: GENERAR REPORTE PDF CON USUARIOS ESPECIALES ==============
+    # ==================== GENERAR REPORTE PDF ===============================
     # ========================================================================
     
     def navegar_a_reporte(self):
-        """
-        Muestra opciones para generar reporte en PDF
-        ✅ INCLUYE USUARIOS ESPECIALES (Edna y Jazmin)
-        """
+        """Muestra opciones para generar reporte en PDF"""
         self.page.clean()
         
-        # ✅ CARGAR TODOS LOS ASOCIADOS (Firebase + Especiales)
+        # CARGAR TODOS LOS ASOCIADOS (Firebase + Especiales)
         try:
             usuarios_ref = db.child("usuarios").get()
             self.asociados_lista = []
@@ -1609,18 +1602,22 @@ class RealBoxApp:
         except Exception as ex:
             self.permisos_error.value = f"Error: {str(ex)}"
             self.page.update()
+
+
 # ==================== FUNCIÓN PRINCIPAL ====================
 def main(page: ft.Page):
     """Función de entrada de la aplicación"""
     app = RealBoxApp(page)
 
+
 # ==================== INICIAR APLICACIÓN PARA RENDER ====================
 if __name__ == "__main__":
     import os
-    # Render asigna un puerto automáticamente en la variable PORT
+    # Render asigna un puerto automáticamente en la variable de entorno PORT
     port = int(os.environ.get("PORT", 8550))
     
-    # Ejecutar Flet en modo web server, escuchando en todas las interfaces
+    # Ejecutar Flet en modo web server, escuchando en todas las interfaces de red
+    # host="0.0.0.0" es CRUCIAL para que Render pueda acceder a la app
     ft.app(
         target=main, 
         view=ft.WEB_BROWSER, 
@@ -1628,4 +1625,4 @@ if __name__ == "__main__":
         host="0.0.0.0"
     )
     
-
+    
