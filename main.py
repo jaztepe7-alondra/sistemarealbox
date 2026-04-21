@@ -130,7 +130,7 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.login_error = ft.Text("", color=ft.colors.RED, size=12)
+        self.login_error = ft.Text("", color=ft.Colors.RED, size=12)
         
         login_btn = ft.ElevatedButton(
             "INICIAR SESIÓN",
@@ -253,7 +253,7 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.registro_error = ft.Text("", color=ft.colors.RED, size=12)
+        self.registro_error = ft.Text("", color=ft.Colors.RED, size=12)
         
         registro_btn = ft.ElevatedButton(
             "REGISTRARSE",
@@ -328,7 +328,7 @@ class RealBoxApp:
             db.child("usuarios").child(id_empleado).set(usuario_data)
             
             self.registro_error.value = "¡Registro exitoso! Inicie sesión"
-            self.registro_error.color = ft.colors.GREEN
+            self.registro_error.color = ft.Colors.GREEN
             self.page.update()
             
             time.sleep(2)
@@ -529,8 +529,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.prod_error = ft.Text("", color=ft.colors.RED, size=12)
-        self.prod_exito = ft.Text("", color=ft.colors.GREEN, size=12)
+        self.prod_error = ft.Text("", color=ft.Colors.RED, size=12)
+        self.prod_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
         
         guardar_btn = ft.ElevatedButton(
             "GUARDAR PRODUCTO",
@@ -693,7 +693,7 @@ class RealBoxApp:
                                         icon=ft.icons.DELETE,
                                         tooltip="Eliminar",
                                         on_click=lambda e, p=prod: self.eliminar_producto_base(p),
-                                        icon_color=ft.colors.RED,
+                                        icon_color=ft.Colors.RED,
                                     ),
                                 ],
                             ),
@@ -701,7 +701,7 @@ class RealBoxApp:
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
                     padding=10,
-                    border=ft.border.all(1, ft.colors.BLACK),
+                    border=ft.border.all(1, ft.Colors.BLACK),
                     border_radius=5,
                     margin=ft.margin.only(bottom=5),
                 )
@@ -792,8 +792,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.prod_edit_error = ft.Text("", color=ft.colors.RED, size=12)
-        self.prod_edit_exito = ft.Text("", color=ft.colors.GREEN, size=12)
+        self.prod_edit_error = ft.Text("", color=ft.Colors.RED, size=12)
+        self.prod_edit_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
         
         guardar_btn = ft.ElevatedButton(
             "ACTUALIZAR PRODUCTO",
@@ -894,7 +894,7 @@ class RealBoxApp:
             content=ft.Text(f"¿Estás seguro de eliminar '{producto['nombre']}' (ID: {producto['id']})?"),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: dlg.close()),
-                ft.TextButton("Eliminar", on_click=confirmar_eliminacion, style=ft.ButtonStyle(color=ft.colors.RED)),
+                ft.TextButton("Eliminar", on_click=confirmar_eliminacion, style=ft.ButtonStyle(color=ft.Colors.RED)),
             ],
         )
         
@@ -943,8 +943,8 @@ class RealBoxApp:
         )
         
         self.llegada_info = ft.Text("", color="#666666", size=12)
-        self.llegada_error = ft.Text("", color=ft.colors.RED, size=12)
-        self.llegada_exito = ft.Text("", color=ft.colors.GREEN, size=12)
+        self.llegada_error = ft.Text("", color=ft.Colors.RED, size=12)
+        self.llegada_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
         
         guardar_btn = ft.ElevatedButton(
             "REGISTRAR LLEGADA",
@@ -1171,7 +1171,7 @@ class RealBoxApp:
             nombre_asociado = reg.get("nombre_asociado", reg.get("nombre_empleado", ""))
             
             fila = ft.DataRow(
-                color=ft.colors.with_opacity(0, bgcolor_fila if bgcolor_fila else "#FFFFFF"),
+                color=ft.Colors.with_opacity(0, bgcolor_fila if bgcolor_fila else "#FFFFFF"),
                 cells=[
                     ft.DataCell(ft.Text(nombre_asociado[:15], color=color_texto, size=9)),
                     ft.DataCell(ft.Text(reg.get("producto_nombre", "")[:15], color=color_texto, size=9)),
@@ -1187,8 +1187,8 @@ class RealBoxApp:
         tabla = ft.DataTable(
             columns=[ft.DataColumn(ft.Text(c, size=10, weight=ft.FontWeight.BOLD)) for c in cabecera],
             rows=filas,
-            heading_row_color=ft.colors.BLACK12,
-            border=ft.border.all(1, ft.colors.BLACK),
+            heading_row_color=ft.Colors.BLACK12,
+            border=ft.border.all(1, ft.Colors.BLACK),
             column_spacing=10,
         )
         
@@ -1275,8 +1275,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.reporte_error = ft.Text("", color=ft.colors.RED, size=12)
-        self.reporte_exito = ft.Text("", color=ft.colors.GREEN, size=12)
+        self.reporte_error = ft.Text("", color=ft.Colors.RED, size=12)
+        self.reporte_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
         
         generar_btn = ft.ElevatedButton(
             "GENERAR PDF",
@@ -1534,8 +1534,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.permisos_error = ft.Text("", color=ft.colors.RED, size=12)
-        self.permisos_exito = ft.Text("", color=ft.colors.GREEN, size=12)
+        self.permisos_error = ft.Text("", color=ft.Colors.RED, size=12)
+        self.permisos_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
         
         conceder_btn = ft.ElevatedButton(
             "CONCEDER PERMISO ASOCIADOr",
