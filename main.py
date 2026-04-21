@@ -1610,20 +1610,16 @@ def main(page: ft.Page):
     app = RealBoxApp(page)
 
 
+
 # ==================== INICIAR APLICACIÓN PARA RENDER ====================
 if __name__ == "__main__":
     import os
-    # Render asigna un puerto automáticamente en la variable de entorno PORT
     port = int(os.environ.get("PORT", 8550))
     
-    # Ejecutar Flet en modo web server.
-    # NOTA: En servidores como Render, NO usamos view=ft.WEB_BROWSER.
-    # Usamos view=None o simplemente dejamos que Flet lo detecte.
-    # host="0.0.0.0" es CRUCIAL para que Render pueda acceder a la app.
+    # En servidores como Render, SOLO necesitamos target, port y host.
+    # Elimina 'view' completamente para evitar conflictos internos de Flet 0.23+
     ft.app(
         target=main, 
-        view=None,          # <-- CAMBIO CLAVE: None en lugar de WEB_BROWSER
         port=port, 
         host="0.0.0.0"
     )
-    
