@@ -923,9 +923,9 @@ class RealBoxApp:
         except:
             self.productos_lista = []
         
-        self.llegada_producto = ft.Dropdown(
+        self.llegada_producto = ft.dropdown(
             label="Seleccionar Producto",
-            options=[ft.Dropdown.Option(p["id"], p["nombre"]) for p in self.productos_lista],
+            options=[ft.dropdown.Option(p["id"], p["nombre"]) for p in self.productos_lista],
             bgcolor="#F5F5F5",
             border_color="#000000",
             focused_border_color="#000000",
@@ -1064,12 +1064,12 @@ class RealBoxApp:
         """Muestra tabla con todos los registros de inventario"""
         self.page.clean()
         
-        filtro_estatus = ft.Dropdown(
+        filtro_estatus = ft.dropdown(
             label="Filtrar por Estatus",
             options=[
-                ft.Dropdown.Option("todos", "Todos los productos"),
-                ft.Dropdown.Option("NORMAL", "Solo NORMAL"),
-                ft.Dropdown.Option("ALERTA", "Solo ALERTA"),
+                ft.dropdown.Option("todos", "Todos los productos"),
+                ft.dropdown.Option("NORMAL", "Solo NORMAL"),
+                ft.dropdown.Option("ALERTA", "Solo ALERTA"),
             ],
             value="todos",
             bgcolor="#F5F5F5",
@@ -1241,13 +1241,13 @@ class RealBoxApp:
             print(f"❌ Error cargando asociados: {ex}")
             self.asociados_lista = []
         
-        self.reporte_tipo = ft.Dropdown(
+        self.reporte_tipo = ft.dropdown(
             label="Tipo de Reporte",
             options=[
-                ft.Dropdown.Option("completo", "Completo"),
-                ft.Dropdown.Option("fecha", "Por Fecha"),
-                ft.Dropdown.Option("asociado", "Por Asociado"),
-                ft.Dropdown.Option("estatus", "Por Estatus"),
+                ft.dropdown.Option("completo", "Completo"),
+                ft.dropdown.Option("fecha", "Por Fecha"),
+                ft.dropdown.Option("asociado", "Por Asociado"),
+                ft.dropdown.Option("estatus", "Por Estatus"),
             ],
             bgcolor="#F5F5F5",
             border_color="#000000",
@@ -1256,7 +1256,7 @@ class RealBoxApp:
             on_change=self.actualizar_opciones_reporte,
         )
         
-        self.reporte_filtro_dropdown = ft.Dropdown(
+        self.reporte_filtro_dropdown = ft.dropdown(
             label="Seleccionar Filtro",
             visible=False,
             bgcolor="#F5F5F5",
@@ -1338,21 +1338,21 @@ class RealBoxApp:
             
             if self.asociados_lista:
                 self.reporte_filtro_dropdown.options = [
-                    ft.Dropdown.Option(assoc["id"], f"{assoc['nombre']} (ID: {assoc['id']})")
+                    ft.dropdown.Option(assoc["id"], f"{assoc['nombre']} (ID: {assoc['id']})")
                     for assoc in self.asociados_lista
                 ]
                 print(f"✅ Dropdown actualizado con {len(self.asociados_lista)} asociados")
             else:
                 self.reporte_filtro_dropdown.options = [
-                    ft.Dropdown.Option("sin_datos", "No hay asociados registrados")
+                    ft.dropdown.Option("sin_datos", "No hay asociados registrados")
                 ]
         
         elif tipo == "estatus":
             self.reporte_filtro_dropdown.visible = True
             self.reporte_filtro_dropdown.label = "Seleccionar Estatus"
             self.reporte_filtro_dropdown.options = [
-                ft.Dropdown.Option("NORMAL", "NORMAL"),
-                ft.Dropdown.Option("ALERTA", "ALERTA"),
+                ft.dropdown.Option("NORMAL", "NORMAL"),
+                ft.dropdown.Option("ALERTA", "ALERTA"),
             ]
         
         self.page.update()
