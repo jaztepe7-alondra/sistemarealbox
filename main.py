@@ -1614,7 +1614,18 @@ def main(page: ft.Page):
     """Función de entrada de la aplicación"""
     app = RealBoxApp(page)
 
-# ==================== EXPORTAR PARA VERCEL ====================
-# Esta línea crea la app ASGI que Vercel necesita
-app = ft.FletApp(target=main).asgi_app()
+# ==================== INICIAR APLICACIÓN PARA RENDER ====================
+if __name__ == "__main__":
+    import os
+    # Render asigna un puerto automáticamente en la variable PORT
+    port = int(os.environ.get("PORT", 8550))
+    
+    # Ejecutar Flet en modo web server, escuchando en todas las interfaces
+    ft.app(
+        target=main, 
+        view=ft.WEB_BROWSER, 
+        port=port, 
+        host="0.0.0.0"
+    )
+    
 
