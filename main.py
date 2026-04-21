@@ -684,13 +684,13 @@ class RealBoxApp:
                             ft.Row(
                                 [
                                     ft.IconButton(
-                                        icon=ft.icons.EDIT,
+                                        icon=ft.Icons.EDIT,
                                         tooltip="Modificar",
                                         on_click=lambda e, p=prod: self.editar_producto_base(p),
                                         icon_color="#000000",
                                     ),
                                     ft.IconButton(
-                                        icon=ft.icons.DELETE,
+                                        icon=ft.Icons.DELETE,
                                         tooltip="Eliminar",
                                         on_click=lambda e, p=prod: self.eliminar_producto_base(p),
                                         icon_color=ft.Colors.RED,
@@ -1080,7 +1080,7 @@ class RealBoxApp:
         )
         
         btn_refrescar = ft.IconButton(
-            icon=ft.icons.REFRESH,
+            icon=ft.Icons.REFRESH,
             tooltip="Refrescar",
             on_click=lambda e: self.cargar_inventario(filtro_estatus.value),
             icon_color="#000000",
