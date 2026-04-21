@@ -701,9 +701,9 @@ class RealBoxApp:
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
                     padding=10,
-                    border=ft.border.all(1, ft.Colors.BLACK),
+                    border=ft.Border.all(1, ft.Colors.BLACK),
                     border_radius=5,
-                    margin=ft.margin.only(bottom=5),
+                    margin=ft.Margin.only(bottom=5),
                 )
                 columnas.append(producto_card)
         else:
@@ -925,7 +925,7 @@ class RealBoxApp:
         
         self.llegada_producto = ft.Dropdown(
             label="Seleccionar Producto",
-            options=[ft.dropdown.Option(p["id"], p["nombre"]) for p in self.productos_lista],
+            options=[ft.Dropdown.Option(p["id"], p["nombre"]) for p in self.productos_lista],
             bgcolor="#F5F5F5",
             border_color="#000000",
             focused_border_color="#000000",
@@ -1067,9 +1067,9 @@ class RealBoxApp:
         filtro_estatus = ft.Dropdown(
             label="Filtrar por Estatus",
             options=[
-                ft.dropdown.Option("todos", "Todos los productos"),
-                ft.dropdown.Option("NORMAL", "Solo NORMAL"),
-                ft.dropdown.Option("ALERTA", "Solo ALERTA"),
+                ft.Dropdown.Option("todos", "Todos los productos"),
+                ft.Dropdown.Option("NORMAL", "Solo NORMAL"),
+                ft.Dropdown.Option("ALERTA", "Solo ALERTA"),
             ],
             value="todos",
             bgcolor="#F5F5F5",
@@ -1188,7 +1188,7 @@ class RealBoxApp:
             columns=[ft.DataColumn(ft.Text(c, size=10, weight=ft.FontWeight.BOLD)) for c in cabecera],
             rows=filas,
             heading_row_color=ft.Colors.BLACK12,
-            border=ft.border.all(1, ft.Colors.BLACK),
+            border=ft.Border.all(1, ft.Colors.BLACK),
             column_spacing=10,
         )
         
@@ -1244,10 +1244,10 @@ class RealBoxApp:
         self.reporte_tipo = ft.Dropdown(
             label="Tipo de Reporte",
             options=[
-                ft.dropdown.Option("completo", "Completo"),
-                ft.dropdown.Option("fecha", "Por Fecha"),
-                ft.dropdown.Option("asociado", "Por Asociado"),
-                ft.dropdown.Option("estatus", "Por Estatus"),
+                ft.Dropdown.Option("completo", "Completo"),
+                ft.Dropdown.Option("fecha", "Por Fecha"),
+                ft.Dropdown.Option("asociado", "Por Asociado"),
+                ft.Dropdown.Option("estatus", "Por Estatus"),
             ],
             bgcolor="#F5F5F5",
             border_color="#000000",
@@ -1338,21 +1338,21 @@ class RealBoxApp:
             
             if self.asociados_lista:
                 self.reporte_filtro_dropdown.options = [
-                    ft.dropdown.Option(assoc["id"], f"{assoc['nombre']} (ID: {assoc['id']})")
+                    ft.Dropdown.Option(assoc["id"], f"{assoc['nombre']} (ID: {assoc['id']})")
                     for assoc in self.asociados_lista
                 ]
                 print(f"✅ Dropdown actualizado con {len(self.asociados_lista)} asociados")
             else:
                 self.reporte_filtro_dropdown.options = [
-                    ft.dropdown.Option("sin_datos", "No hay asociados registrados")
+                    ft.Dropdown.Option("sin_datos", "No hay asociados registrados")
                 ]
         
         elif tipo == "estatus":
             self.reporte_filtro_dropdown.visible = True
             self.reporte_filtro_dropdown.label = "Seleccionar Estatus"
             self.reporte_filtro_dropdown.options = [
-                ft.dropdown.Option("NORMAL", "NORMAL"),
-                ft.dropdown.Option("ALERTA", "ALERTA"),
+                ft.Dropdown.Option("NORMAL", "NORMAL"),
+                ft.Dropdown.Option("ALERTA", "ALERTA"),
             ]
         
         self.page.update()
