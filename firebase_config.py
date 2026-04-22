@@ -1,3 +1,4 @@
+
 # ==================== CONFIGURACIÓN DE FIREBASE ====================
 
 firebase_config = {

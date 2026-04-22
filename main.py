@@ -7,15 +7,18 @@
 # ============================================================================
 
 # ==================== IMPORTACIÓN DE LIBRERÍAS ====================
-import flet as ft                    # Librería para crear la interfaz gráfica
-import pyrebase                      # Librería para conectar con Firebase
-from datetime import datetime, timedelta  # Para manejar fechas y horas
-from reportlab.lib.pagesizes import letter, landscape  # Tamaño de carta
-from reportlab.lib import colors     # Colores para tablas en PDF
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer  # Elementos PDF
-from reportlab.lib.styles import getSampleStyleSheet  # Estilos de texto para PDF
-import os                            # Para manejar rutas de archivos
-import time                          # Para pausas temporales
+import flet as ft
+import pyrebase
+from datetime import datetime, timedelta
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+import os
+import time
+
+from firebase_config import firebase_config
+
 
 # Importar la configuración de Firebase desde otro archivo
 from firebase_config import firebase_config
@@ -1603,12 +1606,11 @@ class RealBoxApp:
             self.permisos_error.value = f"Error: {str(ex)}"
             self.page.update()
 
-
 # ==================== FUNCIÓN PRINCIPAL ====================
 def main(page: ft.Page):
     """Función de entrada de la aplicación"""
+    # Crear la instancia de la app
     app = RealBoxApp(page)
-
 
 
 # ==================== INICIAR APLICACIÓN PARA RENDER ====================
@@ -1616,12 +1618,9 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 8550))
     
-    # En servidores como Render, SOLO necesitamos target, port y host.
-    # Elimina 'view' completamente para evitar conflictos internos de Flet 0.23+
-
-ft.run(
-    main,              # ← Sin 'target=', solo 'main' como primer argumento
-    port=port,
-    host="0.0.0.0"
-)
-
+    # Flet 0.80+ usa ft.run() con 'main' como primer argumento (sin target=)
+    ft.run(
+        main,
+        port=port,
+        host="0.0.0.0"
+    )
