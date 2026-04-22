@@ -1618,7 +1618,7 @@ if __name__ == "__main__":
     
     # En servidores como Render, SOLO necesitamos target, port y host.
     # Elimina 'view' completamente para evitar conflictos internos de Flet 0.23+
-    ft.app(
+    ft.run(
         target=main, 
         port=port, 
         host="0.0.0.0"
