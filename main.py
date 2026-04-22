@@ -3,7 +3,7 @@
 # ============================================================================
 # Descripción: Aplicación para gestionar inventario de productos con Firebase
 # Autor: Jazmin Alondra Tepetate Medina
-# Versión: 2.6 - Optimizado para Render.com (Corrección total de íconos y colores)
+# Versión: 2.7 - Corrección FINAL: Colores como strings (sin ft.colors)
 # ============================================================================
 
 # ==================== IMPORTACIÓN DE LIBRERÍAS ====================
@@ -21,23 +21,12 @@ import time                          # Para pausas temporales
 from firebase_config import firebase_config
 
 # ==================== INICIALIZAR FIREBASE ====================
-# Conectamos con Firebase usando la configuración del archivo firebase_config.py
 firebase = pyrebase.initialize_app(firebase_config)
-db = firebase.database()        # Base de datos Realtime Database
-auth = firebase.auth()          # Sistema de autenticación
+db = firebase.database()
+auth = firebase.auth()
 
 # ==================== FUNCIÓN PARA CALCULAR DÍAS DE ALERTA ====================
 def calcular_dias_alerta(vida_util_dias):
-    """
-    Calcula cuántos días antes de la caducidad se debe activar la alerta
-    
-    Reglas:
-    - 3 días → Alerta 2 días antes
-    - 5 días → Alerta 3 días antes
-    - 6-10 días → Alerta 4 días antes
-    - 11-15 días → Alerta 7 días antes
-    - 16+ días → Alerta 10 días antes
-    """
     if vida_util_dias <= 3:
         return 2
     elif vida_util_dias == 5:
@@ -51,9 +40,6 @@ def calcular_dias_alerta(vida_util_dias):
 
 # ==================== FUNCIÓN PARA DETERMINAR ESTATUS ====================
 def determinar_estatus(fecha_caducidad, vida_util_dias):
-    """
-    Determina si un producto está en estado NORMAL o ALERTA
-    """
     fecha_actual = datetime.now()
     dias_para_alerta = calcular_dias_alerta(vida_util_dias)
     fecha_alerta = fecha_caducidad - timedelta(days=dias_para_alerta)
@@ -65,17 +51,8 @@ def determinar_estatus(fecha_caducidad, vida_util_dias):
 
 # ==================== CLASE PRINCIPAL DE LA APP ====================
 class RealBoxApp:
-    """
-    Clase principal que controla toda la aplicación REALBOX
-    
-    Tipos de usuario:
-    - ASOCIADOe: Usuarios especiales (Edna y Jazmin)
-    - ASOCIADOr: Usuarios con permiso para modificar productos base
-    - ASOCIADO: Usuarios regulares
-    """
     
     def __init__(self, page: ft.Page):
-        """Constructor de la clase"""
         self.page = page
         self.page.title = "REALBOX - Control de Inventarios"
         self.page.theme_mode = ft.ThemeMode.LIGHT
@@ -84,22 +61,18 @@ class RealBoxApp:
         self.page.window.height = 850
         self.page.scroll = ft.ScrollMode.AUTO
         
-        # Variables de sesión
         self.usuario_actual = None
         self.tipo_usuario = None
         self.nombre_completo = None
         self.id_empleado = None
         
-        # Usuarios especiales (ASOCIADOe)
         self.usuarios_especiales = {
             "741001": {"nombre": "Edna Patiño", "tipo": "ASOCIADOe"},
             "741002": {"nombre": "Jazmin Alondra Tepetate Medina", "tipo": "ASOCIADOe", "id": "000002"}
         }
         
-        # Lista de asociados (se llena al abrir reporte)
         self.asociados_lista = []
         
-        # Mostrar pantalla de login al iniciar
         self.navegar_a_login()
     
     # ========================================================================
@@ -107,7 +80,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_login(self):
-        """Muestra la pantalla de inicio de sesión"""
         self.page.clean()
         
         self.login_id = ft.TextField(
@@ -129,7 +101,7 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.login_error = ft.Text("", color=ft.Colors.RED, size=12)
+        self.login_error = ft.Text("", color="#FF0000", size=12)  # ✅ ROJO como string
         
         login_btn = ft.ElevatedButton(
             "INICIAR SESIÓN",
@@ -170,7 +142,6 @@ class RealBoxApp:
         )
     
     def verificar_login(self, e):
-        """Valida las credenciales del usuario"""
         id_empleado = self.login_id.value.strip()
         password = self.login_password.value.strip()
         
@@ -179,7 +150,6 @@ class RealBoxApp:
             self.page.update()
             return
         
-        # Verificar usuarios especiales
         if password in self.usuarios_especiales:
             usuario_info = self.usuarios_especiales[password]
             
@@ -196,7 +166,6 @@ class RealBoxApp:
             self.navegar_a_menu_principal()
             return
         
-        # Verificar usuarios en Firebase
         try:
             usuarios_ref = db.child("usuarios").child(id_empleado).get()
             
@@ -220,7 +189,6 @@ class RealBoxApp:
             self.page.update()
     
     def navegar_a_registro(self, e):
-        """Muestra formulario para registrar nuevos usuarios"""
         self.page.clean()
         
         self.registro_id = ft.TextField(
@@ -252,7 +220,7 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.registro_error = ft.Text("", color=ft.Colors.RED, size=12)
+        self.registro_error = ft.Text("", color="#FF0000", size=12)  # ✅ ROJO
         
         registro_btn = ft.ElevatedButton(
             "REGISTRARSE",
@@ -294,7 +262,6 @@ class RealBoxApp:
         )
     
     def registrar_usuario(self, e):
-        """Guarda un nuevo usuario en Firebase"""
         id_empleado = self.registro_id.value.strip()
         nombre = self.registro_nombre.value.strip()
         password = self.registro_password.value.strip()
@@ -327,7 +294,7 @@ class RealBoxApp:
             db.child("usuarios").child(id_empleado).set(usuario_data)
             
             self.registro_error.value = "¡Registro exitoso! Inicie sesión"
-            self.registro_error.color = ft.Colors.GREEN
+            self.registro_error.color = "#00AA00"  # ✅ VERDE como string
             self.page.update()
             
             time.sleep(2)
@@ -342,7 +309,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_menu_principal(self):
-        """Muestra el menú principal"""
         self.page.clean()
         
         bienvenida = ft.Text(
@@ -473,7 +439,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_producto_base(self):
-        """Muestra formulario para registrar productos"""
         self.page.clean()
         
         self.prod_nombre = ft.TextField(
@@ -528,8 +493,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.prod_error = ft.Text("", color=ft.Colors.RED, size=12)
-        self.prod_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
+        self.prod_error = ft.Text("", color="#FF0000", size=12)  # ✅ ROJO
+        self.prod_exito = ft.Text("", color="#00AA00", size=12)   # ✅ VERDE
         
         guardar_btn = ft.ElevatedButton(
             "GUARDAR PRODUCTO",
@@ -574,7 +539,6 @@ class RealBoxApp:
         )
     
     def guardar_producto_base(self, e):
-        """Guarda un producto en Firebase"""
         nombre = self.prod_nombre.value.strip()
         producto_id = self.prod_id.value.strip()
         precio = self.prod_precio.value.strip()
@@ -630,7 +594,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_gestionar_productos_base(self):
-        """Muestra lista de productos para modificar/eliminar"""
         self.page.clean()
         
         titulo = ft.Text(
@@ -683,16 +646,16 @@ class RealBoxApp:
                             ft.Row(
                                 [
                                     ft.IconButton(
-                                        icon="edit",  # ✅ CORREGIDO: String en minúsculas
+                                        icon="edit",
                                         tooltip="Modificar",
                                         on_click=lambda e, p=prod: self.editar_producto_base(p),
                                         icon_color="#000000",
                                     ),
                                     ft.IconButton(
-                                        icon="delete",  # ✅ CORREGIDO: String en minúsculas
+                                        icon="delete",
                                         tooltip="Eliminar",
                                         on_click=lambda e, p=prod: self.eliminar_producto_base(p),
-                                        icon_color=ft.Colors.RED,  # ✅ CORREGIDO: ft.Colors
+                                        icon_color="#FF0000",  # ✅ ROJO
                                     ),
                                 ],
                             ),
@@ -700,7 +663,7 @@ class RealBoxApp:
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
                     padding=10,
-                    border=ft.border.all(1, ft.Colors.BLACK),  # ✅ CORREGIDO: ft.Colors
+                    border=ft.border.all(1, "#000000"),  # ✅ NEGRO como string
                     border_radius=5,
                     margin=ft.margin.only(bottom=5),
                 )
@@ -728,7 +691,6 @@ class RealBoxApp:
         )
     
     def editar_producto_base(self, producto):
-        """Muestra formulario para editar producto"""
         self.page.clean()
         
         datos = producto["datos"]
@@ -791,8 +753,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.prod_edit_error = ft.Text("", color=ft.Colors.RED, size=12)
-        self.prod_edit_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
+        self.prod_edit_error = ft.Text("", color="#FF0000", size=12)  # ✅ ROJO
+        self.prod_edit_exito = ft.Text("", color="#00AA00", size=12)   # ✅ VERDE
         
         guardar_btn = ft.ElevatedButton(
             "ACTUALIZAR PRODUCTO",
@@ -837,7 +799,6 @@ class RealBoxApp:
         )
     
     def actualizar_producto_base(self, producto_id):
-        """Actualiza producto en Firebase"""
         nombre = self.prod_edit_nombre.value.strip()
         precio = self.prod_edit_precio.value.strip()
         descuento = self.prod_edit_descuento.value.strip()
@@ -876,7 +837,6 @@ class RealBoxApp:
             self.page.update()
     
     def eliminar_producto_base(self, producto):
-        """Elimina producto de Firebase"""
         def confirmar_eliminacion(e):
             try:
                 db.child("productos_base").child(producto["id"]).remove()
@@ -893,7 +853,7 @@ class RealBoxApp:
             content=ft.Text(f"¿Estás seguro de eliminar '{producto['nombre']}' (ID: {producto['id']})?"),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: dlg.close()),
-                ft.TextButton("Eliminar", on_click=confirmar_eliminacion, style=ft.ButtonStyle(color=ft.Colors.RED)),
+                ft.TextButton("Eliminar", on_click=confirmar_eliminacion, style=ft.ButtonStyle(color="#FF0000")),
             ],
         )
         
@@ -906,7 +866,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_registro_llegada(self):
-        """Muestra formulario para registrar llegada de productos"""
         self.page.clean()
         
         try:
@@ -942,8 +901,8 @@ class RealBoxApp:
         )
         
         self.llegada_info = ft.Text("", color="#666666", size=12)
-        self.llegada_error = ft.Text("", color=ft.Colors.RED, size=12)
-        self.llegada_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
+        self.llegada_error = ft.Text("", color="#FF0000", size=12)  # ✅ ROJO
+        self.llegada_exito = ft.Text("", color="#00AA00", size=12)   # ✅ VERDE
         
         guardar_btn = ft.ElevatedButton(
             "REGISTRAR LLEGADA",
@@ -985,7 +944,6 @@ class RealBoxApp:
         )
     
     def actualizar_info_producto(self, e):
-        """Muestra información del producto seleccionado"""
         producto_id = self.llegada_producto.value
         for p in self.productos_lista:
             if p["id"] == producto_id:
@@ -994,7 +952,6 @@ class RealBoxApp:
                 break
     
     def guardar_registro_llegada(self, e):
-        """Guarda registro de llegada en Firebase"""
         producto_id = self.llegada_producto.value
         cajas = self.llegada_cajas.value.strip()
         
@@ -1060,7 +1017,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_inventario(self):
-        """Muestra tabla con todos los registros de inventario"""
         self.page.clean()
         
         filtro_estatus = ft.Dropdown(
@@ -1079,7 +1035,7 @@ class RealBoxApp:
         )
         
         btn_refrescar = ft.IconButton(
-            icon="refresh",  # ✅ CORREGIDO: String en minúsculas
+            icon="refresh",
             tooltip="Refrescar",
             on_click=lambda e: self.cargar_inventario(filtro_estatus.value),
             icon_color="#000000",
@@ -1126,7 +1082,6 @@ class RealBoxApp:
         self.cargar_inventario("todos")
     
     def cargar_inventario(self, filtro_estatus):
-        """Carga y muestra el inventario con el filtro seleccionado"""
         try:
             inventario_ref = db.child("inventario").get()
             registros = []
@@ -1166,11 +1121,10 @@ class RealBoxApp:
             else:
                 bgcolor_fila = "#FFFFFF"
             
-            # Verificar ambas claves para compatibilidad
             nombre_asociado = reg.get("nombre_asociado", reg.get("nombre_empleado", ""))
             
             fila = ft.DataRow(
-                color=None,  # ✅ CORREGIDO: None en lugar de ft.colors.with_opacity
+                color=None,
                 cells=[
                     ft.DataCell(ft.Text(nombre_asociado[:15], color=color_texto, size=9)),
                     ft.DataCell(ft.Text(reg.get("producto_nombre", "")[:15], color=color_texto, size=9)),
@@ -1186,8 +1140,8 @@ class RealBoxApp:
         tabla = ft.DataTable(
             columns=[ft.DataColumn(ft.Text(c, size=10, weight=ft.FontWeight.BOLD)) for c in cabecera],
             rows=filas,
-            heading_row_color=ft.Colors.BLACK12,  # ✅ CORREGIDO: ft.Colors
-            border=ft.border.all(1, ft.Colors.BLACK),  # ✅ CORREGIDO: ft.Colors
+            heading_row_color="#0000001F",  # ✅ BLACK12 como hex
+            border=ft.border.all(1, "#000000"),  # ✅ NEGRO
             column_spacing=10,
         )
         
@@ -1199,15 +1153,12 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_reporte(self):
-        """Muestra opciones para generar reporte en PDF"""
         self.page.clean()
         
-        # CARGAR TODOS LOS ASOCIADOS (Firebase + Especiales)
         try:
             usuarios_ref = db.child("usuarios").get()
             self.asociados_lista = []
             
-            # Agregar usuarios especiales primero (Edna y Jazmin)
             for password, info in self.usuarios_especiales.items():
                 self.asociados_lista.append({
                     "id": info.get("id", password),
@@ -1215,10 +1166,8 @@ class RealBoxApp:
                     "tipo": info["tipo"]
                 })
             
-            # Agregar usuarios de Firebase
             if usuarios_ref.val():
                 for assoc_id, data in usuarios_ref.val().items():
-                    # Evitar duplicados
                     existe = False
                     for assoc in self.asociados_lista:
                         if assoc["id"] == assoc_id:
@@ -1233,8 +1182,6 @@ class RealBoxApp:
                         })
             
             print(f"✅ Total de asociados cargados: {len(self.asociados_lista)}")
-            for assoc in self.asociados_lista:
-                print(f"   - {assoc['nombre']} (ID: {assoc['id']}, Tipo: {assoc['tipo']})")
                 
         except Exception as ex:
             print(f"❌ Error cargando asociados: {ex}")
@@ -1274,8 +1221,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.reporte_error = ft.Text("", color=ft.Colors.RED, size=12)
-        self.reporte_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
+        self.reporte_error = ft.Text("", color="#FF0000", size=12)  # ✅ ROJO
+        self.reporte_exito = ft.Text("", color="#00AA00", size=12)   # ✅ VERDE
         
         generar_btn = ft.ElevatedButton(
             "GENERAR PDF",
@@ -1319,7 +1266,6 @@ class RealBoxApp:
         )
     
     def actualizar_opciones_reporte(self, e):
-        """Actualiza los controles de filtro según el tipo de reporte"""
         tipo = self.reporte_tipo.value
         
         self.reporte_filtro_dropdown.visible = False
@@ -1340,7 +1286,6 @@ class RealBoxApp:
                     ft.dropdown.Option(assoc["id"], f"{assoc['nombre']} (ID: {assoc['id']})")
                     for assoc in self.asociados_lista
                 ]
-                print(f"✅ Dropdown actualizado con {len(self.asociados_lista)} asociados")
             else:
                 self.reporte_filtro_dropdown.options = [
                     ft.dropdown.Option("sin_datos", "No hay asociados registrados")
@@ -1357,7 +1302,6 @@ class RealBoxApp:
         self.page.update()
     
     def generar_reporte_pdf(self, e):
-        """Genera archivo PDF con los datos del inventario filtrados"""
         tipo = self.reporte_tipo.value
         
         if self.reporte_filtro_dropdown.visible and self.reporte_filtro_dropdown.value:
@@ -1457,7 +1401,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_actualizaciones(self):
-        """Muestra historial de actualizaciones (Solo Edna)"""
         self.page.clean()
         
         try:
@@ -1522,7 +1465,6 @@ class RealBoxApp:
     # ========================================================================
     
     def navegar_a_gestion_permisos(self):
-        """Permite conceder permisos de ASOCIADOr (Solo Jazmin)"""
         self.page.clean()
         
         self.permisos_id = ft.TextField(
@@ -1533,8 +1475,8 @@ class RealBoxApp:
             label_style=ft.TextStyle(color="#000000"),
         )
         
-        self.permisos_error = ft.Text("", color=ft.Colors.RED, size=12)
-        self.permisos_exito = ft.Text("", color=ft.Colors.GREEN, size=12)
+        self.permisos_error = ft.Text("", color="#FF0000", size=12)  # ✅ ROJO
+        self.permisos_exito = ft.Text("", color="#00AA00", size=12)   # ✅ VERDE
         
         conceder_btn = ft.ElevatedButton(
             "CONCEDER PERMISO ASOCIADOr",
@@ -1577,7 +1519,6 @@ class RealBoxApp:
         )
     
     def conceder_permiso(self, e):
-        """Actualiza el tipo de usuario a ASOCIADOr"""
         empleado_id = self.permisos_id.value.strip()
         
         if not empleado_id:
@@ -1612,18 +1553,13 @@ def main(page: ft.Page):
 # ==================== INICIAR APLICACIÓN PARA RENDER ====================
 if __name__ == "__main__":
     import os
-    # Render asigna un puerto automáticamente en la variable de entorno PORT
     port = int(os.environ.get("PORT", 8550))
     
-    # Ejecutar Flet en modo web server
-    # ✅ CORRECCIONES CLAVE:
-    # - view=None: No abrir navegador (Render es headless)
-    # - host="0.0.0.0": Escuchar en todas las interfaces (necesario para Render)
-    # - port=port: Usar el puerto dinámico que Render asigna
     ft.app(
         target=main, 
-        view=None,          # ✅ CORREGIDO: None en lugar de WEB_BROWSER
+        view=None,
         port=port, 
-        host="0.0.0.0"      # ✅ CORREGIDO: Escuchar en todas las interfaces
+        host="0.0.0.0"
     )
+    
     
