@@ -3,22 +3,19 @@
 # ============================================================================
 # Descripción: Aplicación para gestionar inventario de productos con Firebase
 # Autor: Jazmin Alondra Tepetate Medina
-# Versión: 2.5 - Optimizado para Render.com (Web Server)
+# Versión: 2.6 - Optimizado para Render.com (Corrección total de íconos y colores)
 # ============================================================================
 
 # ==================== IMPORTACIÓN DE LIBRERÍAS ====================
-import flet as ft
-import pyrebase
-from datetime import datetime, timedelta
-from reportlab.lib.pagesizes import letter, landscape
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
-import os
-import time
-
-from firebase_config import firebase_config
-
+import flet as ft                    # Librería para crear la interfaz gráfica
+import pyrebase                      # Librería para conectar con Firebase
+from datetime import datetime, timedelta  # Para manejar fechas y horas
+from reportlab.lib.pagesizes import letter, landscape  # Tamaño de carta
+from reportlab.lib import colors     # Colores para tablas en PDF
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer  # Elementos PDF
+from reportlab.lib.styles import getSampleStyleSheet  # Estilos de texto para PDF
+import os                            # Para manejar rutas de archivos
+import time                          # Para pausas temporales
 
 # Importar la configuración de Firebase desde otro archivo
 from firebase_config import firebase_config
@@ -83,7 +80,6 @@ class RealBoxApp:
         self.page.title = "REALBOX - Control de Inventarios"
         self.page.theme_mode = ft.ThemeMode.LIGHT
         self.page.bgcolor = "#FFFFFF"
-        # Nota: En modo web server, window.width/height no afectan mucho, pero los dejamos por compatibilidad
         self.page.window.width = 550
         self.page.window.height = 850
         self.page.scroll = ft.ScrollMode.AUTO
@@ -687,16 +683,16 @@ class RealBoxApp:
                             ft.Row(
                                 [
                                     ft.IconButton(
-                                        icon=ft.Icons.EDIT,
+                                        icon="edit",  # ✅ CORREGIDO: String en minúsculas
                                         tooltip="Modificar",
                                         on_click=lambda e, p=prod: self.editar_producto_base(p),
                                         icon_color="#000000",
                                     ),
                                     ft.IconButton(
-                                        icon=ft.Icons.DELETE,
+                                        icon="delete",  # ✅ CORREGIDO: String en minúsculas
                                         tooltip="Eliminar",
                                         on_click=lambda e, p=prod: self.eliminar_producto_base(p),
-                                        icon_color=ft.Colors.RED,
+                                        icon_color=ft.Colors.RED,  # ✅ CORREGIDO: ft.Colors
                                     ),
                                 ],
                             ),
@@ -704,9 +700,9 @@ class RealBoxApp:
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
                     padding=10,
-                    border=ft.Border.all(1, ft.Colors.BLACK),
+                    border=ft.border.all(1, ft.Colors.BLACK),  # ✅ CORREGIDO: ft.Colors
                     border_radius=5,
-                    margin=ft.Margin.only(bottom=5),
+                    margin=ft.margin.only(bottom=5),
                 )
                 columnas.append(producto_card)
         else:
@@ -926,7 +922,7 @@ class RealBoxApp:
         except:
             self.productos_lista = []
         
-        self.llegada_producto = ft.dropdown(
+        self.llegada_producto = ft.Dropdown(
             label="Seleccionar Producto",
             options=[ft.dropdown.Option(p["id"], p["nombre"]) for p in self.productos_lista],
             bgcolor="#F5F5F5",
@@ -1067,7 +1063,7 @@ class RealBoxApp:
         """Muestra tabla con todos los registros de inventario"""
         self.page.clean()
         
-        filtro_estatus = ft.dropdown(
+        filtro_estatus = ft.Dropdown(
             label="Filtrar por Estatus",
             options=[
                 ft.dropdown.Option("todos", "Todos los productos"),
@@ -1083,7 +1079,7 @@ class RealBoxApp:
         )
         
         btn_refrescar = ft.IconButton(
-            icon=ft.Icons.REFRESH,
+            icon="refresh",  # ✅ CORREGIDO: String en minúsculas
             tooltip="Refrescar",
             on_click=lambda e: self.cargar_inventario(filtro_estatus.value),
             icon_color="#000000",
@@ -1174,7 +1170,7 @@ class RealBoxApp:
             nombre_asociado = reg.get("nombre_asociado", reg.get("nombre_empleado", ""))
             
             fila = ft.DataRow(
-                color=ft.Colors.with_opacity(0, bgcolor_fila if bgcolor_fila else "#FFFFFF"),
+                color=None,  # ✅ CORREGIDO: None en lugar de ft.colors.with_opacity
                 cells=[
                     ft.DataCell(ft.Text(nombre_asociado[:15], color=color_texto, size=9)),
                     ft.DataCell(ft.Text(reg.get("producto_nombre", "")[:15], color=color_texto, size=9)),
@@ -1190,8 +1186,8 @@ class RealBoxApp:
         tabla = ft.DataTable(
             columns=[ft.DataColumn(ft.Text(c, size=10, weight=ft.FontWeight.BOLD)) for c in cabecera],
             rows=filas,
-            heading_row_color=ft.Colors.BLACK12,
-            border=ft.Border.all(1, ft.Colors.BLACK),
+            heading_row_color=ft.Colors.BLACK12,  # ✅ CORREGIDO: ft.Colors
+            border=ft.border.all(1, ft.Colors.BLACK),  # ✅ CORREGIDO: ft.Colors
             column_spacing=10,
         )
         
@@ -1244,7 +1240,7 @@ class RealBoxApp:
             print(f"❌ Error cargando asociados: {ex}")
             self.asociados_lista = []
         
-        self.reporte_tipo = ft.dropdown(
+        self.reporte_tipo = ft.Dropdown(
             label="Tipo de Reporte",
             options=[
                 ft.dropdown.Option("completo", "Completo"),
@@ -1259,7 +1255,7 @@ class RealBoxApp:
             on_change=self.actualizar_opciones_reporte,
         )
         
-        self.reporte_filtro_dropdown = ft.dropdown(
+        self.reporte_filtro_dropdown = ft.Dropdown(
             label="Seleccionar Filtro",
             visible=False,
             bgcolor="#F5F5F5",
@@ -1606,21 +1602,28 @@ class RealBoxApp:
             self.permisos_error.value = f"Error: {str(ex)}"
             self.page.update()
 
+
 # ==================== FUNCIÓN PRINCIPAL ====================
 def main(page: ft.Page):
     """Función de entrada de la aplicación"""
-    # Crear la instancia de la app
     app = RealBoxApp(page)
 
 
 # ==================== INICIAR APLICACIÓN PARA RENDER ====================
 if __name__ == "__main__":
     import os
+    # Render asigna un puerto automáticamente en la variable de entorno PORT
     port = int(os.environ.get("PORT", 8550))
     
-    # Flet 0.80+ usa ft.run() con 'main' como primer argumento (sin target=)
-    ft.run(
-        main,
-        port=port,
-        host="0.0.0.0"
+    # Ejecutar Flet en modo web server
+    # ✅ CORRECCIONES CLAVE:
+    # - view=None: No abrir navegador (Render es headless)
+    # - host="0.0.0.0": Escuchar en todas las interfaces (necesario para Render)
+    # - port=port: Usar el puerto dinámico que Render asigna
+    ft.app(
+        target=main, 
+        view=None,          # ✅ CORREGIDO: None en lugar de WEB_BROWSER
+        port=port, 
+        host="0.0.0.0"      # ✅ CORREGIDO: Escuchar en todas las interfaces
     )
+    
